@@ -17,6 +17,7 @@ import com.pinyougou.pojo.TbTypeTemplateExample.Criteria;
 import com.pinyougou.sellergoods.service.TypeTemplateService;
 
 import entity.PageResult;
+import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * 服务实现层
@@ -31,6 +32,56 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 
 	@Autowired
 	private TbSpecificationOptionMapper specificationOptionMapper;
+
+	@Autowired
+	private RedisTemplate redisTemplate;
+
+	/**
+	 * 将数据存入缓存
+	 * brandList,specList
+	 */
+	private void saveToRedis(){
+		//获取模板数据
+		List<TbTypeTemplate> typeTemplateList = findAll();
+		//循环模板
+		for(TbTypeTemplate typeTemplate :typeTemplateList){
+			//存储品牌列表
+			List<Map> brandList = JSON.parseArray(typeTemplate.getBrandIds(), Map.class);
+			redisTemplate.boundHashOps("brandList").put(typeTemplate.getId(), brandList);
+			//存储规格列表
+			List<Map> specList = findSpecList(typeTemplate.getId());//根据模板ID查询规格列表
+			redisTemplate.boundHashOps("specList").put(typeTemplate.getId(), specList);
+		}
+	}
+
+
+	@Override
+	public PageResult findPage(TbTypeTemplate typeTemplate, int pageNum, int pageSize) {
+		PageHelper.startPage(pageNum, pageSize);
+
+		TbTypeTemplateExample example=new TbTypeTemplateExample();
+		Criteria criteria = example.createCriteria();
+
+		if(typeTemplate!=null){
+			if(typeTemplate.getName()!=null && typeTemplate.getName().length()>0){
+				criteria.andNameLike("%"+typeTemplate.getName()+"%");
+			}
+			if(typeTemplate.getSpecIds()!=null && typeTemplate.getSpecIds().length()>0){
+				criteria.andSpecIdsLike("%"+typeTemplate.getSpecIds()+"%");
+			}
+			if(typeTemplate.getBrandIds()!=null && typeTemplate.getBrandIds().length()>0){
+				criteria.andBrandIdsLike("%"+typeTemplate.getBrandIds()+"%");
+			}
+			if(typeTemplate.getCustomAttributeItems()!=null && typeTemplate.getCustomAttributeItems().length()>0){
+				criteria.andCustomAttributeItemsLike("%"+typeTemplate.getCustomAttributeItems()+"%");
+			}
+
+		}
+
+		Page<TbTypeTemplate> page= (Page<TbTypeTemplate>)typeTemplateMapper.selectByExample(example);
+		saveToRedis();//存入数据到缓存
+		return new PageResult(page.getTotal(), page.getResult());
+	}
 
 	//扩展属性的拼接
 	@Override
@@ -137,32 +188,6 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 		}		
 	}
 	
-	
-		@Override
-	public PageResult findPage(TbTypeTemplate typeTemplate, int pageNum, int pageSize) {
-		PageHelper.startPage(pageNum, pageSize);
-		
-		TbTypeTemplateExample example=new TbTypeTemplateExample();
-		Criteria criteria = example.createCriteria();
-		
-		if(typeTemplate!=null){			
-						if(typeTemplate.getName()!=null && typeTemplate.getName().length()>0){
-				criteria.andNameLike("%"+typeTemplate.getName()+"%");
-			}
-			if(typeTemplate.getSpecIds()!=null && typeTemplate.getSpecIds().length()>0){
-				criteria.andSpecIdsLike("%"+typeTemplate.getSpecIds()+"%");
-			}
-			if(typeTemplate.getBrandIds()!=null && typeTemplate.getBrandIds().length()>0){
-				criteria.andBrandIdsLike("%"+typeTemplate.getBrandIds()+"%");
-			}
-			if(typeTemplate.getCustomAttributeItems()!=null && typeTemplate.getCustomAttributeItems().length()>0){
-				criteria.andCustomAttributeItemsLike("%"+typeTemplate.getCustomAttributeItems()+"%");
-			}
-	
-		}
-		
-		Page<TbTypeTemplate> page= (Page<TbTypeTemplate>)typeTemplateMapper.selectByExample(example);		
-		return new PageResult(page.getTotal(), page.getResult());
-	}
+
 	
 }
