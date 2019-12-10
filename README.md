@@ -86,6 +86,22 @@
 
  
 
+![image](https://raw.githubusercontent.com/cristinejssssss/pinyougou/master/assets/91011.png)
+
+
+
+
+
+![image](https://raw.githubusercontent.com/cristinejssssss/pinyougou/master/assets/91012.png)
+
+
+
+![image](https://raw.githubusercontent.com/cristinejssssss/pinyougou/master/assets/91013.png)
+
+
+
+![image](https://raw.githubusercontent.com/cristinejssssss/pinyougou/master/assets/91014.png)
+
 
 
 
@@ -95,6 +111,16 @@
 - 新增商品
 - 商品管理
 
+![image](https://raw.githubusercontent.com/cristinejssssss/pinyougou/master/assets/91022.png)
+
+
+
+
+
+
+
+![image](https://raw.githubusercontent.com/cristinejssssss/pinyougou/master/assets/91023.png)
+
 
 
 
@@ -103,6 +129,12 @@
 
 - 首页渲染
 - 广告的展示
+
+![image](https://raw.githubusercontent.com/cristinejssssss/pinyougou/master/assets/90131.png)
+
+
+
+
 
 
 
@@ -114,9 +146,13 @@
 - 根据关键词搜索
 - 根据分类过滤搜索
 
+![image](https://raw.githubusercontent.com/cristinejssssss/pinyougou/master/assets/91041.png)
 
 
 
+
+
+![image](https://raw.githubusercontent.com/cristinejssssss/pinyougou/master/assets/91042.png)
 
 
 
